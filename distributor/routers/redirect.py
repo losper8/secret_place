@@ -10,7 +10,7 @@ from loguru import logger
 from distributor.common.utilies import Singleton
 from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete
 
-SLEEP_MODE = 15
+SLEEP_MODE = 5
 
 
 class Curator(metaclass=Singleton):
@@ -44,7 +44,10 @@ class Curator(metaclass=Singleton):
         try:
             emb_name, method, idx, content = event.emb_name, event.method, event.idx, event.content
             embedder = self._embs_map[emb_name][method][idx]
+            self._log.info(f'embedder was chosen')
             result = await embedder.call(content=content)
+            self._log.info(f'result was recieved')
+            future.set_result(result)
         except aiohttp.ClientConnectionError as e:
             self._log.error(f'connection error while sending event: {content}')
         except aiohttp.ClientTimeout as e:
@@ -57,6 +60,7 @@ class Curator(metaclass=Singleton):
         finally:
             self._queue.task_done()
             future.set_result(result)
+            self._log.info('the result was set')
 
     async def put_event(self, event):
         try:
@@ -69,13 +73,15 @@ class Curator(metaclass=Singleton):
 
     async def _process_queue(self):
         while True:
-            if self._queue.empty():
+            self._log.info(f'check if queue is empty')
+            if not self._queue.empty():
+                self._log.info(f'queue is not empty')
+                future, event = await self._queue.get()
+                await self._process_event(future=future, event=event)
+                self._log.info(f'process finished')
+            elif self._queue.empty():
                 self._log.info(f'queue is empty - sleep mode for {SLEEP_MODE} seconds')
                 await asyncio.sleep(SLEEP_MODE)
-                continue
-
-            future, event = await self._queue.get()
-            await self._process_event(future=future, event=event)
 
     def process_queue(self):
         self._major_task = asyncio.create_task(self._process_queue())
