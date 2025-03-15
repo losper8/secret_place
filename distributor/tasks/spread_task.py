@@ -62,6 +62,6 @@ def start_app():
 
     @app.on_event("startup")
     async def startup():
-        await Curator().process_queue()
+        Curator().process_queue()
 
     uvicorn.run(app, host=api_conf.host, port=api_conf.port)

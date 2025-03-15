@@ -16,7 +16,6 @@ class ApiParams(pydantic.BaseModel):
 
 class EmbsParams(ApiParams):
     emb_name: str
-    endpoint: str
 
 
 class LogParams(pydantic.BaseModel):
@@ -73,8 +72,7 @@ class Config(metaclass=Singleton):
             "host": confuse.String(),
             "port": confuse.Integer(),
             "schema": confuse.String(),
-            "emb_name": confuse.String(),
-            "endpoint": confuse.String()
+            "emb_name": confuse.String()
         }
     )
 

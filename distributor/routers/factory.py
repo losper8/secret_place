@@ -5,6 +5,7 @@ from asyncio import Queue
 from abc import ABC
 from typing import Dict, Optional, List
 
+
 class Method:
     def __init__(self, 
                  schema: str,
@@ -23,12 +24,13 @@ class MethodGetTFIDF(Method):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
     
     async def call(self, content: Optional[Dict] = None):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(self._endpoint) as response:
-                result = await response.read()
-        return result
-    
-    
+        return {"Success": 200}
+        # async with aiohttp.ClientSession() as session:
+        #     async with session.get(self._endpoint) as response:
+        #         result = await response.read()
+        # return result
+
+
 class MethodPost(Method):
     def __init__(self, 
                 schema: str,
