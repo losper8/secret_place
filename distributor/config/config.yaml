@@ -1,0 +1,22 @@
+api:
+  host: 'localhost'
+  port: 5432
+  schema: 'http'
+containers:
+  - host: 'localhost'
+    port: 5433
+    schema: 'http'
+    emb_name: 'name_1'
+    endpoint: 'endpoint'
+  - host: 'localhost'
+    port: 5434
+    schema: 'http'
+    emb_name: 'name_2'
+    endpoint: 'endpoint'
+queue:
+  maxsize: 100
+  retry_attempts: 3
+log:
+  level: 'INFO'
+  output_file:
+
