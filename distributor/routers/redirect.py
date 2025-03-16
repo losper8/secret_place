@@ -49,14 +49,14 @@ class Curator(metaclass=Singleton):
             self._log.info(f'result was recieved')
             future.set_result(result)
         except aiohttp.ClientConnectionError as e:
-            self._log.error(f'connection error while sending event: {content}')
-        except aiohttp.ClientTimeout as e:
-            self._log.error(f'timeout error while sending event: {content}')
+            self._log.error(f'connection error while sending event: {e}')
+        except aiohttp.ConnectionTimeoutError as e:
+            self._log.error(f'timeout error while sending event: {e}')
         except KeyError as e:
             self._log.error(f'user input error please review request parameters')
         except Exception as e:
             self._log.error(
-                f'an unexpected error occurred while sending event: {content}')
+                f'an unexpected error occurred {type(e)} while sending event: {e}')
         finally:
             self._queue.task_done()
             future.set_result(result)
@@ -73,15 +73,25 @@ class Curator(metaclass=Singleton):
 
     async def _process_queue(self):
         while True:
-            self._log.info(f'check if queue is empty')
-            if not self._queue.empty():
-                self._log.info(f'queue is not empty')
-                future, event = await self._queue.get()
-                await self._process_event(future=future, event=event)
-                self._log.info(f'process finished')
-            elif self._queue.empty():
-                self._log.info(f'queue is empty - sleep mode for {SLEEP_MODE} seconds')
+            try:
+                self._log.info(f'check if queue is empty')
+                if not self._queue.empty():
+                    self._log.info(f'queue is not empty')
+                    future, event = await self._queue.get()
+                    await self._process_event(future=future, event=event)
+                    self._log.info(f'process finished')
+                elif self._queue.empty():
+                    self._log.info(f'queue is empty - sleep mode for {SLEEP_MODE} seconds')
+                    await asyncio.sleep(SLEEP_MODE)
+            except Exception as e:
+                self._log.error(f'there is an exception type {type(e)} during test: {e}')
+                self._log.warning(f'activate sleep mode for {SLEEP_MODE} seconds')
                 await asyncio.sleep(SLEEP_MODE)
 
+    async def run(self):
+        tsks = []
+        tsks.append(self._process_queue())
+        await asyncio.gather(*tsks)
+
     def process_queue(self):
-        self._major_task = asyncio.create_task(self._process_queue())
+        self._major_task = asyncio.create_task(self.run())
