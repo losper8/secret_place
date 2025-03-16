@@ -11,7 +11,7 @@ router = APIRouter()
 
 class Req(BaseModel):
     emb_name: str
-    idx: Literal['tfidf', 'idea', 'combined', 'pure', 'delete']
+    idx: Literal['tfidf', 'idea', 'combined', 'pure', 'delete', 'read']
     method: Literal['POST', 'GET', 'DELETE']
     content: Optional[Dict]
 

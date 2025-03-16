@@ -1,14 +1,14 @@
 api:
   host: 'localhost'
-  port: 5432
+  port: 50446
   schema: 'http'
 containers:
   - host: 'localhost'
-    port: 5433
+    port: 50443
     schema: 'http'
     emb_name: 'name_1'
   - host: 'localhost'
-    port: 5434
+    port: 50445
     schema: 'http'
     emb_name: 'name_2'
 queue:

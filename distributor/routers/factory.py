@@ -13,7 +13,21 @@ class Method:
                  port: int,
                  endpoint: str):
         self._endpoint = f'{schema}://{host}:{port}/{endpoint}'
-    
+
+
+class MethodGetREAD(Method):
+    def __init__(self,
+                 schema: str,
+                 host: str,
+                 port: int,
+                 endpoint: str = '/read'):
+        super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
+    async def call(self, content: Optional[Dict] = None):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self._endpoint, json=content) as response:
+                result = await response.read()
+        return result
+
 
 class MethodGetTFIDF(Method):
     def __init__(self, 
@@ -24,12 +38,11 @@ class MethodGetTFIDF(Method):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
     
     async def call(self, content: Optional[Dict] = None):
-        return {"Success": 200}
-        # async with aiohttp.ClientSession() as session:
-        #     async with session.get(self._endpoint) as response:
-        #         result = await response.read()
-        # return result
-
+        async def call(self, content: Optional[Dict] = None):
+            async with aiohttp.ClientSession() as session:
+                async with session.post(self._endpoint, json=content) as response:
+                    result = await response.read()
+            return result
 
 class MethodPost(Method):
     def __init__(self, 

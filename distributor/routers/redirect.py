@@ -8,7 +8,7 @@ from typing import Dict, Optional, List
 from loguru import logger
 
 from distributor.common.utilies import Singleton
-from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete
+from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete, MethodGetREAD
 
 SLEEP_MODE = 5
 
@@ -30,7 +30,8 @@ class Curator(metaclass=Singleton):
                         'combined': MethodPostSearchCombined(schema=emb.schema, host=emb.host, port=emb.port)
                     },
                     'GET': { 
-                            'tfidf': MethodGetTFIDF(schema=emb.schema, host=emb.host, port=emb.port)
+                            'tfidf': MethodGetTFIDF(schema=emb.schema, host=emb.host, port=emb.port),
+                            'read': MethodGetREAD(schema=emb.schema, host=emb.host, port=emb.port)
                     },
                     'DELETE': {
                             'delete': MethodDelete(schema=emb.schema, host=emb.host, port=emb.port)
@@ -59,7 +60,8 @@ class Curator(metaclass=Singleton):
                 f'an unexpected error occurred {type(e)} while sending event: {e}')
         finally:
             self._queue.task_done()
-            future.set_result(result)
+            if not future.done():  # Проверка состояния future
+                future.set_result(result)
             self._log.info('the result was set')
 
     async def put_event(self, event):
