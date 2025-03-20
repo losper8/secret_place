@@ -8,7 +8,7 @@ from typing import Dict, Optional, List
 from loguru import logger
 
 from distributor.common.utilies import Singleton
-from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete, MethodGetREAD, MethodPostSearchTFIDF, MethodPostSearchCombined, MethodGetEmbeddingsSize, MethodGetFirstTimeLoadEmbeddings                                 
+from distributor.routers.factory import MethodPostSearchTFIDF, MethodPostIdea, MethodPostSearchPure, MethodPostSearchCombined, MethodGetEmbeddingsSize, MethodGetTFIDF, MethodGetRead, MethodGetFirstTimeLoadEmbeddings, MethodDelete
 
 SLEEP_MODE = 5
 
@@ -33,7 +33,7 @@ class Curator(metaclass=Singleton):
                     'GET': { 
                         'embeddings_size': MethodGetEmbeddingsSize(schema=emb.schema, host=emb.host, port=emb.port),
                         'train_tfidf': MethodGetTFIDF(schema=emb.schema, host=emb.host, port=emb.port),
-                        'read': MethodGetREAD(schema=emb.schema, host=emb.host, port=emb.port),
+                        'read': MethodGetRead(schema=emb.schema, host=emb.host, port=emb.port),
                         'first_time_load_embeddings': MethodGetFirstTimeLoadEmbeddings(schema=emb.schema, host=emb.host, port=emb.port)     
                     },
                     'DELETE': {
