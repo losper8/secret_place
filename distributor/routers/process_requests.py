@@ -1,6 +1,7 @@
-from typing import Literal, Dict, Optional
+from typing import Literal, Dict, Optional, List, Union
 
 from fastapi import APIRouter, HTTPException, status, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 from loguru import logger
 
@@ -11,9 +12,9 @@ router = APIRouter()
 
 class Req(BaseModel):
     emb_name: str
-    idx: Literal['tfidf', 'idea', 'combined', 'pure', 'delete', 'read']
+    idx: Literal['search_tfidf', 'add_idea', 'search_embeddings', 'search_combined', 'delete', 'train_tfidf', 'embeddings_size', 'first_time_load_embeddings']
     method: Literal['POST', 'GET', 'DELETE']
-    content: Optional[Dict]
+    content: Optional[Union[Dict, List[Dict]]]
 
 
 @router.post("/redirect")

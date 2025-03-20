@@ -8,7 +8,7 @@ from typing import Dict, Optional, List
 from loguru import logger
 
 from distributor.common.utilies import Singleton
-from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete, MethodGetREAD
+from distributor.routers.factory import MethodGetTFIDF, MethodPostIdea, MethodPostSearchCombined, MethodPostSearchPure, MethodDelete, MethodGetREAD, MethodPostSearchTFIDF, MethodPostSearchCombined, MethodGetEmbeddingsSize, MethodGetFirstTimeLoadEmbeddings                                 
 
 SLEEP_MODE = 5
 
@@ -25,16 +25,19 @@ class Curator(metaclass=Singleton):
         for emb in embs_cfg:
             d[emb.emb_name] = {
                     'POST': {
-                        'idea': MethodPostIdea(schema=emb.schema, host=emb.host, port=emb.port),
-                        'pure': MethodPostSearchPure(schema=emb.schema, host=emb.host, port=emb.port),
-                        'combined': MethodPostSearchCombined(schema=emb.schema, host=emb.host, port=emb.port)
+                        'search_tfidf': MethodPostSearchTFIDF(schema=emb.schema, host=emb.host, port=emb.port),
+                        'add_idea': MethodPostIdea(schema=emb.schema, host=emb.host, port=emb.port),
+                        'search_embeddings': MethodPostSearchPure(schema=emb.schema, host=emb.host, port=emb.port),
+                        'search_combined': MethodPostSearchCombined(schema=emb.schema, host=emb.host, port=emb.port)
                     },
                     'GET': { 
-                            'tfidf': MethodGetTFIDF(schema=emb.schema, host=emb.host, port=emb.port),
-                            'read': MethodGetREAD(schema=emb.schema, host=emb.host, port=emb.port)
+                        'embeddings_size': MethodGetEmbeddingsSize(schema=emb.schema, host=emb.host, port=emb.port),
+                        'train_tfidf': MethodGetTFIDF(schema=emb.schema, host=emb.host, port=emb.port),
+                        'read': MethodGetREAD(schema=emb.schema, host=emb.host, port=emb.port),
+                        'first_time_load_embeddings': MethodGetFirstTimeLoadEmbeddings(schema=emb.schema, host=emb.host, port=emb.port)     
                     },
                     'DELETE': {
-                            'delete': MethodDelete(schema=emb.schema, host=emb.host, port=emb.port)
+                            'delete': MethodDelete(schema=emb.schema, host=emb.host, port=emb.port) 
                     }
                 }
         return d
