@@ -12,7 +12,7 @@ router = APIRouter()
 
 class Req(BaseModel):
     emb_name: str
-    idx: Literal['search_tfidf', 'add_idea', 'search_embeddings', 'search_combined', 'delete', 'train_tfidf', 'embeddings_size', 'first_time_load_embeddings']
+    idx: Literal['search_tfidf', 'add_idea', 'search_embeddings', 'search_combined', 'delete', 'train_tfidf', 'embeddings_size', 'first_time_load_embeddings', 'read']
     method: Literal['POST', 'GET', 'DELETE']
     content: Optional[Union[Dict, List[Dict]]]
 
