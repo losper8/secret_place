@@ -3,7 +3,10 @@ import aiohttp
 
 from asyncio import Queue
 from abc import ABC
+from loguru import logger
 from typing import Dict, Optional, List
+           
+
 
 
 class Method:
@@ -12,7 +15,7 @@ class Method:
                  host: str,
                  port: int,
                  endpoint: str):
-        self._endpoint = f'{schema}://{host}:{port}/{endpoint}'
+        self._endpoint = f'{schema}://{host}:{port}/api/v1/{endpoint}'
 
 
 class MethodGetREAD(Method):
@@ -20,11 +23,14 @@ class MethodGetREAD(Method):
                  schema: str,
                  host: str,
                  port: int,
-                 endpoint: str = '/read'):
+                 endpoint: str = 'read'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
     async def call(self, content: Optional[Dict] = None):
         async with aiohttp.ClientSession() as session:
-            async with session.post(self._endpoint, json=content) as response:
+            logger.info(f'get read method"s xontent: {content}')
+            endpoint = self._endpoint + f'?id={content["id"]}'
+            logger.info(f'get read method"s endpoint: {endpoint}')
+            async with session.get(endpoint) as response:
                 result = await response.read()
         return result
 
@@ -34,13 +40,15 @@ class MethodGetTFIDF(Method):
                  schema: str,
                  host: str,
                  port: int,
-                 endpoint: str = '/train_tfidf'):
+                 endpoint: str = 'train_tfidf'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
-    
-    async def call(self, content: Optional[Dict] = None):
+
         async def call(self, content: Optional[Dict] = None):
             async with aiohttp.ClientSession() as session:
-                async with session.post(self._endpoint, json=content) as response:
+                logger.info(f'get read method"s xontent: {content}')
+                endpoint = self._endpoint + f'?column_type={content["column_type"]}'
+                logger.info(f'get read method"s endpoint: {endpoint}')
+                async with session.get(self._endpoint, json=content) as response:
                     result = await response.read()
             return result
 
@@ -64,7 +72,7 @@ class MethodPostIdea(MethodPost):
                 schema: str,
                 host: str,
                 port: int,
-                endpoint: str = '/add_idea'):
+                endpoint: str = 'add_idea'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
 
 
@@ -73,7 +81,7 @@ class MethodPostSearchCombined(MethodPost):
                 schema: str,
                 host: str,
                 port: int,
-                endpoint: str = '/search_combined'):
+                endpoint: str = 'search_combined'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
 
 
@@ -82,7 +90,7 @@ class MethodPostSearchPure(MethodPost):
                 schema: str,
                 host: str,
                 port: int,
-                endpoint: str = '/search_embeddings'):
+                endpoint: str = 'search_embeddings'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
 
 
@@ -91,11 +99,12 @@ class MethodDelete(Method):
             schema: str,
             host: str,
             port: int,
-            endpoint: str = '/delete_idea'):
+            endpoint: str = 'delete_idea'):
         super().__init__(schema=schema, host=host, port=port, endpoint=endpoint)
 
     async def call(self, content: Dict):
         async with aiohttp.ClientSession() as session:
+	  
             async with session.delete(self._endpoint, json=content) as response:
                 result = await response.read()
         return result

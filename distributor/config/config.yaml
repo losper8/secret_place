@@ -1,13 +1,13 @@
 api:
-  host: 'localhost'
+  host: '0.0.0.0'
   port: 50446
   schema: 'http'
 containers:
-  - host: 'localhost'
+  - host: 'antiplagiat_prod_3-antiplagiat-1'
     port: 50443
     schema: 'http'
     emb_name: 'name_1'
-  - host: 'localhost'
+  - host: 'antiplagiat'
     port: 50445
     schema: 'http'
     emb_name: 'name_2'
