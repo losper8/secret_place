@@ -10,8 +10,8 @@ COPY . .
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Открываем порт 50446
-EXPOSE 50446
+# Открываем порт 50443
+EXPOSE 50443
 
 # Запускаем приложение
 CMD ["python", "main.py", "-c", "distributor/config/config.yaml"]
